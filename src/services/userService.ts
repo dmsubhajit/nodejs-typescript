@@ -1,17 +1,14 @@
 import { User } from '../models/user';
 
-const users: User[] = [];
+const getUsers = async (): Promise<User[]> => {
+  return await User.findAll();
+};
 
-const getUsers = (): User[] => users;
-
-const createUser = (data: Partial<User>): User => {
-  const user: User = {
-    id: users.length + 1,
+const createUser = async (data: Partial<User>): Promise<User> => {
+  return await User.create({
     name: data.name || 'Unnamed',
     email: data.email || '',
-  };
-  users.push(user);
-  return user;
+  });
 };
 
 export default { getUsers, createUser };

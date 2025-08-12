@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import routes from './routes';
+import { sequelize } from './models/user';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -19,6 +20,8 @@ app.get('/', (_req, res) => {
   res.send('Hello, TypeScript Node.js!');
 });
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+sequelize.sync().then(() => {
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
 });
