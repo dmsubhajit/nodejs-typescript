@@ -13,7 +13,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Needed for creating tags
+      contents: write  
       packages: write
 
     steps:
@@ -21,7 +21,7 @@ jobs:
         run: |
           echo "lower_owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
           echo "lower_repo=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-          echo "image_name=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+          echo "image_name=${{ github.repository_owner }}/$(echo '${{ github.event.repository.name }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
           echo "commit_hash=$(echo '${{ github.sha }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
           echo "short_sha=$(echo '${{ github.sha }}' | cut -c1-7 | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
