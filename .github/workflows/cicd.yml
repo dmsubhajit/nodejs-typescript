@@ -13,7 +13,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  
+      contents: write  # Needed for creating tags
       packages: write
 
     steps:
@@ -21,8 +21,9 @@ jobs:
         run: |
           echo "lower_owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
           echo "lower_repo=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-          echo "image_name=${{ github.repository_owner }}/$(echo '${{ github.event.repository.name }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+          echo "image_name=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
           echo "commit_hash=$(echo '${{ github.sha }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+          echo "short_sha=$(echo '${{ github.sha }}' | cut -c1-7 | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,7 +41,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.image_name }}
           tags: |
-            type=sha,format=long
+            type=raw,value=${{ env.short_sha }}
             type=ref,event=branch
 
       - name: Build and push Docker image
@@ -51,10 +52,10 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Create GitHub tag from commit hash
+      - name: Create GitHub tag from short commit hash
         if: success()
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git tag build-${{ env.commit_hash }}
-          git push origin build-${{ env.commit_hash }}
+          git tag build-${{ env.short_sha }}
+          git push origin build-${{ env.short_sha }}
