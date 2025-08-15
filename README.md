@@ -193,3 +193,26 @@ sudo systemctl enable docker
 sudo systemctl start docker
 ```
 The ```docker run hello-world``` command should download and run a test image, printing a "Hello from Docker!" message.
+
+### Prepare app directory and runtime files
+```sh
+# sudo mkdir -p $APP_DIR
+# sudo chown -R $APP_USER:$APP_USER $APP_DIR
+# cd $APP_DIR
+
+sudo mkdir -p /opt/nodeapp
+sudo chown -R deploy:deploy /opt/nodeapp
+cd /opt/nodeapp
+```
+```.env``` (kept on server, not in git)
+```sh
+cd /opt/nodeapp
+
+cat > .env <<EOF
+NODE_ENV=production
+PORT=3000
+# If your app uses DATABASE_URL (Prisma/Knex/Sequelize etc.)
+DATABASE_URL=postgresql://db_user:db_pass@127.0.0.1:5432/db_name
+# Add any other app secrets here
+EOF
+```
